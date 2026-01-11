@@ -34,13 +34,16 @@ env/
 .DS_Store
 *.tmp
 
-# Project specific
+# Project cruft
 *.log
 .env
 .env.local
 *.lock
 .specify/
 .claude/
+CLAUDE.md
+/specs
+.coverage
 
 # Application-Specific files
 *.zip
