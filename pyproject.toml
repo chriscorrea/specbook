@@ -1,0 +1,50 @@
+[project]
+name = "specbook"
+version = "0.1.0"
+description = "CLI tool to collaborate on spec-driven development (SDD) project artifacts"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Christopher Correa" }
+]
+dependencies = [
+    "typer>=0.9",
+    "rich>=13",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "pyright>=1.1",
+]
+
+[project.scripts]
+specbook = "specbook.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/specbook"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.pyright]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
+include = ["src"]
+
+[tool.coverage.run]
+source = ["src/specbook"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+]
