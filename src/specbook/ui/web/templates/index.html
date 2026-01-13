@@ -212,6 +212,247 @@
             margin-bottom: 0.625rem;
             color: var(--color-text);
         }
+
+        /* markdown content styling */
+        .markdown-content h1:first-child {
+            margin-top: 0;
+        }
+        .markdown-content p {
+            margin-bottom: 1rem;
+        }
+        .markdown-content ul,
+        .markdown-content ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.25rem;
+        }
+        .markdown-content code {
+            background: var(--color-surface-raised);
+            padding: 0.125rem 0.375rem;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+        }
+        .markdown-content pre {
+            background: var(--color-surface-raised);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            font-size: var(--text-sm);
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid var(--color-primary);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: var(--color-text-muted);
+        }
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        .markdown-content th,
+        .markdown-content td {
+            border: 1px solid var(--color-border);
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+        .markdown-content th {
+            background: var(--color-surface-raised);
+            font-weight: var(--font-semibold);
+        }
+        .markdown-content a {
+            color: var(--color-primary-light);
+            text-decoration: none;
+        }
+        .markdown-content a:hover {
+            text-decoration: underline;
+        }
+        .markdown-content hr {
+            border: none;
+            border-top: 1px solid var(--color-border);
+            margin: 1.5rem 0;
+        }
+        .markdown-content strong {
+            font-weight: var(--font-semibold);
+        }
+
+        /* task list checkboxes */
+        .markdown-content .contains-task-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .markdown-content .task-list-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content .task-list-item-checkbox {
+            appearance: none;
+            width: 1.125rem;
+            height: 1.125rem;
+            border: 2px solid var(--color-border-light);
+            border-radius: 3px;
+            background: transparent;
+            cursor: default;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+        .markdown-content .task-list-item-checkbox:checked {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+            background-size: 12px;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* loading state */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: var(--color-text-muted);
+        }
+
+        /* sidebar section styling */
+        .sidebar-section {
+            border-bottom: 1px solid var(--color-border);
+        }
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+        .sidebar-section-header {
+            padding: 0.75rem 1rem;
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+        }
+        .sidebar-section-header:hover {
+            color: var(--color-text);
+        }
+        .sidebar-section-content {
+            display: none;
+        }
+        .sidebar-section-header.expanded + .sidebar-section-content {
+            display: block;
+        }
+
+        /* spec header styling */
+        .spec-header {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            transition: background-color 0.2s ease;
+        }
+        .spec-header:hover {
+            background-color: var(--color-surface);
+        }
+        .spec-header::before {
+            content: "\25B6";
+            font-size: var(--text-xs);
+            color: var(--color-primary-light);
+            margin-right: 0.5rem;
+            transition: transform 0.2s ease;
+        }
+        .spec-header.expanded::before {
+            transform: rotate(90deg);
+        }
+
+        /* document list styling */
+        .doc-list {
+            list-style: none;
+            display: none;
+            background: var(--color-surface);
+        }
+        .spec-header.expanded + .doc-list {
+            display: block;
+        }
+        .doc-item {
+            padding: 0.4rem 1rem 0.4rem 2rem;
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .doc-item:hover {
+            background-color: var(--color-surface-raised);
+            color: var(--color-text);
+        }
+        .doc-item::before {
+            content: "\2022";
+            color: var(--color-primary-light);
+            margin-right: 0.5rem;
+        }
+        .doc-item.active {
+            background-color: var(--color-primary-dim);
+            color: var(--color-text);
+        }
+
+        /* project document items (no indent like spec docs) */
+        .project-doc-item {
+            padding: 0.5rem 1rem;
+            font-size: var(--text-sm);
+        }
+        .project-doc-item::before {
+            content: "\25C6";
+            color: var(--color-secondary-light);
+            margin-right: 0.5rem;
+        }
+
+        /* completed items styling */
+        .completed {
+            color: var(--color-text-muted);
+        }
+        .completed::before {
+            color: var(--color-text-muted);
+        }
+        .spec-header.completed::before {
+            color: var(--color-text-muted);
+        }
+
+        /* spec header with active child document */
+        .spec-header.has-active {
+            background-color: var(--color-surface);
+            border-left: 3px solid var(--color-primary);
+        }
+
+        /* document metadata styling */
+        .doc-metadata {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--color-border);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .doc-metadata:hover {
+            background-color: var(--color-surface-raised);
+        }
+        .doc-metadata-extra {
+            display: none;
+            padding-top: 0.5rem;
+            font-style: italic;
+        }
+        .doc-metadata.expanded .doc-metadata-extra {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -223,21 +464,36 @@
         <div class="layout">
             <aside class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <h2>Documements</h2>
+                    <h2>Documents</h2>
                 </div>
                 <div class="sidebar-content">
+                    <!-- project section (collapsed by default) -->
+                    {% if project_documents %}
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-header">Project Guides</div>
+                        <div class="sidebar-section-content">
+                            {% for doc in project_documents %}
+                            <div class="project-doc-item doc-item" data-path="{{ doc.path }}">{{ doc.name }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- specifications section (expanded by default) -->
                     {% if specs %}
-                    <ul class="spec-list">
-                        {% for spec in specs %}
-                        <li>{{ spec.name }}</li>
-                            <ul>
-                                <!-- placeholder / example -->
-                                <li data-level="1">one</li>
-                                <li data-level="1">two</li>
-                                <li data-level="1">three</li>
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-header expanded">Specifications</div>
+                        <div class="sidebar-section-content">
+                            {% for spec in specs %}
+                            <div class="spec-header{% if spec.is_complete %} completed{% endif %}" data-spec="{{ spec.name }}">{{ spec.name }}</div>
+                            <ul class="doc-list">
+                                {% for doc in spec.documents %}
+                                <li class="doc-item{% if spec.is_complete %} completed{% endif %}" data-path="specs/{{ spec.name }}/{{ doc.name }}">{{ doc.display_name }}</li>
+                                {% endfor %}
                             </ul>
-                        {% endfor %}
-                    </ul>
+                            {% endfor %}
+                        </div>
+                    </div>
                     {% else %}
                     <div style="padding: 1rem; color: var(--color-text-muted); text-align: center;">
                         <p>No specifications found</p>
@@ -245,26 +501,132 @@
                     {% endif %}
                 </div>
             </aside>
-            <main class="main-content">
-                <div class="empty-state">
-                    <p>Select a specification to view details</p>
+            <main class="main-content" id="main-content">
+                <div class="empty-state" id="empty-state">
+                    <p>Select a document to view its contents</p>
                 </div>
+                <div class="markdown-content" id="document-content" style="display: none;"></div>
             </main>
         </div>
     </div>
     <script>
-        // expand/collapse spec list items
-        document.querySelectorAll('.spec-list > li').forEach(item => {
+        // format timestamp as relative time (e.g., "3 days ago")
+        function formatRelativeTime(timestamp) {
+            const now = Date.now() / 1000;
+            const diff = now - timestamp;
+            const seconds = Math.floor(diff);
+            const minutes = Math.floor(diff / 60);
+            const hours = Math.floor(diff / 3600);
+            const days = Math.floor(diff / 86400);
+
+            if (seconds < 60) return 'just now';
+            if (minutes === 1) return '1 minute ago';
+            if (minutes < 60) return `${minutes} minutes ago`;
+            if (hours === 1) return '1 hour ago';
+            if (hours < 24) return `${hours} hours ago`;
+            if (days === 1) return 'yesterday';
+            if (days < 30) return `${days} days ago`;
+            if (days < 60) return '1 month ago';
+            if (days < 365) return `${Math.floor(days / 30)} months ago`;
+            return `${Math.floor(days / 365)} years ago`;
+        }
+
+        // format timestamp as date (e.g., "Dec 9, 1906")
+        function formatDate(timestamp) {
+            return new Date(timestamp * 1000).toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric'
+            });
+        }
+
+        // document loading via API
+        async function loadDocument(path) {
+            const emptyState = document.getElementById('empty-state');
+            const docContent = document.getElementById('document-content');
+
+            // show loading state
+            emptyState.style.display = 'none';
+            docContent.innerHTML = '<div class="loading">Loading...</div>';
+            docContent.style.display = 'block';
+
+            try {
+                const response = await fetch(`/api/document?path=${encodeURIComponent(path)}`);
+                if (!response.ok) {
+                    const error = await response.json();
+                    docContent.innerHTML = `<div class="empty-state"><p>Error: ${error.error || 'Failed to load document'}</p></div>`;
+                    return;
+                }
+                const data = await response.json();
+
+                // create metadata HTML with expandable content section
+                const metadataHtml = `<div class="doc-metadata">
+                    <span class="doc-metadata-summary">Last updated ${formatRelativeTime(data.modified)} · Created ${formatDate(data.created)}</span>
+                    <div class="doc-metadata-extra">
+                        <!-- expandable detailed metadata -->
+                        [placeholder for detailed metadata]
+                    </div>
+                </div>`;
+
+                // insert metadata after first header *or* prepend if none
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = data.content;
+                const firstHeader = tempDiv.querySelector('h1, h2, h3, h4, h5, h6');
+                if (firstHeader) {
+                    firstHeader.insertAdjacentHTML('afterend', metadataHtml);
+                } else {
+                    tempDiv.insertAdjacentHTML('afterbegin', metadataHtml);
+                }
+                docContent.innerHTML = tempDiv.innerHTML;
+
+                // make metadata clickable to expand/collapse
+                const metadata = docContent.querySelector('.doc-metadata');
+                if (metadata) {
+                    metadata.addEventListener('click', () => {
+                        metadata.classList.toggle('expanded');
+                    });
+                }
+            } catch (err) {
+                docContent.innerHTML = '<div class="empty-state"><p>Failed to load document</p></div>';
+            }
+        }
+
+        // expand/collapse sidebar section headers
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', (e) => {
+                e.stopPropagation();
+                header.classList.toggle('expanded');
+            });
+        });
+
+        // expand/collapse spec headers
+        document.querySelectorAll('.spec-header').forEach(header => {
+            header.addEventListener('click', (e) => {
+                e.stopPropagation();
+                header.classList.toggle('expanded');
+            });
+        });
+
+        // document item clicks - load document and highlight
+        document.querySelectorAll('.doc-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const sibling = item.nextElementSibling;
-                if (sibling && sibling.tagName === 'UL') {
-                    // close any other open lists
-                    document.querySelectorAll('.spec-list > li.expanded').forEach(other => {
-                        if (other !== item) other.classList.remove('expanded');
-                    });
-                    // toggle current
-                    item.classList.toggle('expanded');
+                const path = item.dataset.path;
+                if (path) {
+                    // remove active from all items and spec-headers
+                    document.querySelectorAll('.doc-item.active').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.spec-header.has-active').forEach(el => el.classList.remove('has-active'));
+
+                    // add active to clicked item
+                    item.classList.add('active');
+
+                    // find and highlight parent spec-header (if exists)
+                    const docList = item.closest('.doc-list');
+                    if (docList && docList.previousElementSibling?.classList.contains('spec-header')) {
+                        docList.previousElementSibling.classList.add('has-active');
+                        docList.previousElementSibling.classList.add('expanded');
+                    }
+
+                    // load the document
+                    loadDocument(path);
                 }
             });
         });

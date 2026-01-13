@@ -189,3 +189,107 @@ class SpecListing:
             if p.is_dir() and not p.name.startswith(".")
         ]
         return cls(project_root=project_root, specs=specs)
+
+
+@dataclass
+class ProjectDocument:
+    """project-level document for sidebar display"""
+
+    name: str
+    """display name (e.g., 'Constitution', 'CLAUDE.md', and so on)"""
+
+    path: Path
+    """absolute path to the document"""
+
+    category: str
+    """grouping: 'guide' for constitution/agent, 'memory' for .specify/memory/"""
+
+
+@dataclass
+class SpecDocument:
+    """document within a spec directory"""
+
+    name: str
+    """filename (e.g., 'spec.md', 'plan.md')"""
+
+    path: Path
+    """absolute path to the document"""
+
+    display_name: str
+    """human-readable name (e.g., 'Specification', 'Plan')"""
+
+    doc_type: str
+    """type identifier: 'spec', 'plan', 'tasks', 'research', 'data-model', 'quickstart', 'other'"""
+
+
+@dataclass
+class CompletionStatus:
+    """completion status for a spec"""
+
+    total_tasks: int
+    """total number of checkbox items in tasks.md"""
+
+    completed_tasks: int
+    """number of checked items [x]"""
+
+    @property
+    def is_complete(self) -> bool:
+        """true if all tasks are completed (or no tasks exist)
+
+        NOTE: this is a temporary definition of completness; in the future,
+        other approaches of inference or explicit annotation may be used
+        """
+        return self.total_tasks > 0 and self.completed_tasks == self.total_tasks
+
+    @property
+    def progress_percent(self) -> int:
+        """completion percentage (0-100)"""
+        if self.total_tasks == 0:
+            return 0
+        return int((self.completed_tasks / self.total_tasks) * 100)
+
+
+@dataclass
+class SpecDirectoryExpanded:
+    """specification directory with documents and completion status"""
+
+    name: str
+    """directory name (e.g., '001-spec-core')"""
+
+    path: Path
+    """absolute path to the directory"""
+
+    documents: list[SpecDocument]
+    """documents in this spec, ordered by type priority"""
+
+    completion: CompletionStatus
+    """completion status from tasks.md analysis"""
+
+    @property
+    def is_complete(self) -> bool:
+        """true if spec is complete"""
+        return self.completion.is_complete
+
+
+@dataclass
+class ProjectListing:
+    """complete project structure for web UI"""
+
+    project_root: Path
+    """path to project root"""
+
+    project_documents: list[ProjectDocument]
+    """project-level docs (constitution, agent files)"""
+
+    specs: list[SpecDirectoryExpanded]
+    """spec directories with documents and completion"""
+
+    @property
+    def has_project_documents(self) -> bool:
+        """true if any project-level documents exist"""
+        return len(self.project_documents) > 0
+
+    @property
+    def is_empty(self) -> bool:
+        """True if no specs found"""
+        return len(self.specs) == 0
