@@ -1,6 +1,7 @@
-"""Data models for specbook project root detection."""
+"""Data models for specbook project root detection and server management."""
 
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 
 
@@ -78,3 +79,112 @@ class SearchResult:
             #f"Reached: {self.searched_to}\n\n"
             #f"Specbook works in a project with .specify/ or specs/"
         )
+
+
+# server management models
+
+@dataclass
+class ServerConfig:
+    """config for a specbook web server"""
+
+    port: int
+    """port to bind server to"""
+
+    project_root: Path
+    """absolute path to the project root being served"""
+
+    host: str = "127.0.0.1"
+    """host to bind to—always localhost"""
+
+    @property
+    def url(self) -> str:
+        """full URL for the server."""
+        return f"http://{self.host}:{self.port}"
+
+
+class ServerState(Enum):
+    """possible states for a server port"""
+
+    RUNNING = "running"
+    STOPPED = "stopped"
+    PORT_CONFLICT = "conflict"
+
+
+@dataclass
+class ServerStatus:
+    """status of a server on a specific port"""
+
+    port: int
+    """port number being checked"""
+
+    state: ServerState
+    """current state of the port"""
+
+    pid: int | None
+    """process ID if running (else None)"""
+
+    project_root: Path | None
+    """project being served if running (else None)"""
+
+    @property
+    def url(self) -> str | None:
+        """URL if server is running"""
+        if self.state == ServerState.RUNNING:
+            return f"http://127.0.0.1:{self.port}"
+        return None
+
+    @property
+    def is_running(self) -> bool:
+        """True if a specbook server is running on this port"""
+        return self.state == ServerState.RUNNING
+
+    @property
+    def has_conflict(self) -> bool:
+        """True if port is occupied by a non-specbook process"""
+        return self.state == ServerState.PORT_CONFLICT
+
+
+@dataclass
+class SpecDirectory:
+    """specification directory for display"""
+
+    name: str
+    """directory name (e.g., '001-spec-a')"""
+
+    path: Path
+    """absolute path to the directory"""
+
+    @classmethod
+    def from_path(cls, path: Path) -> "SpecDirectory":
+        """create from a directory path"""
+        return cls(name=path.name, path=path)
+
+
+@dataclass
+class SpecListing:
+    """all spec directories in a project"""
+
+    project_root: Path
+    """path to the project root"""
+
+    specs: list[SpecDirectory]
+    """list of spec directories, sorted by name"""
+
+    @property
+    def is_empty(self) -> bool:
+        """True if no specs found"""
+        return len(self.specs) == 0
+
+    @classmethod
+    def from_project(cls, project_root: Path) -> "SpecListing":
+        """scan project and build spec listing"""
+        specs_dir = project_root / "specs"
+        if not specs_dir.is_dir():
+            return cls(project_root=project_root, specs=[])
+
+        specs = [
+            SpecDirectory.from_path(p)
+            for p in sorted(specs_dir.iterdir())
+            if p.is_dir() and not p.name.startswith(".")
+        ]
+        return cls(project_root=project_root, specs=specs)
