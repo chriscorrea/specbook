@@ -3,10 +3,16 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import psutil
 import pytest
 
 from specbook.core.models import ServerState, SpecDirectory, SpecListing
-from specbook.core.server import get_server_status
+from specbook.core.server import (
+    get_project_root_from_process,
+    get_server_status,
+    is_specbook_process,
+    open_browser,
+)
 
 
 class TestSpecListing:
@@ -155,3 +161,67 @@ class TestGetServerStatus:
             assert status.port == 7732
             assert status.pid == 99999
             assert status.project_root is None
+
+
+class TestIsSpecbookProcess:
+    """tests for is_specbook_process()"""
+
+    def test_returns_true_for_specbook_process(self) -> None:
+        """is_specbook_process() returns True when cmdline contains specbook"""
+        mock_proc = MagicMock()
+        mock_proc.cmdline.return_value = ["python", "-m", "specbook.ui.web.app", "7732"]
+
+        assert is_specbook_process(mock_proc) is True
+
+    def test_returns_false_for_other_process(self) -> None:
+        """is_specbook_process() returns False for non-specbook process"""
+        mock_proc = MagicMock()
+        mock_proc.cmdline.return_value = ["node", "server.js"]
+
+        assert is_specbook_process(mock_proc) is False
+
+    def test_returns_false_on_access_denied(self) -> None:
+        """is_specbook_process() returns False when access is denied"""
+        mock_proc = MagicMock()
+        mock_proc.cmdline.side_effect = psutil.AccessDenied(123)
+
+        assert is_specbook_process(mock_proc) is False
+
+
+class TestGetProjectRootFromProcess:
+    """tests for get_project_root_from_process()"""
+
+    def test_extracts_from_project_root_flag(self, temp_dir: Path) -> None:
+        """extracts path from --project-root"""
+        mock_proc = MagicMock()
+        mock_proc.cmdline.return_value = ["python", "--project-root", str(temp_dir)]
+
+        assert get_project_root_from_process(mock_proc) == temp_dir
+
+    def test_falls_back_to_last_arg_if_valid_dir(self, temp_dir: Path) -> None:
+        """falls back to last arg if it's a valid dir"""
+        mock_proc = MagicMock()
+        mock_proc.cmdline.return_value = ["python", "-m", "app", str(temp_dir)]
+
+        assert get_project_root_from_process(mock_proc) == temp_dir
+
+    def test_returns_none_on_access_denied(self) -> None:
+        """returns None when process access is denied"""
+        mock_proc = MagicMock()
+        mock_proc.cmdline.side_effect = psutil.AccessDenied(123)
+
+        assert get_project_root_from_process(mock_proc) is None
+
+
+class TestOpenBrowser:
+    """tests for open_browser()"""
+
+    def test_returns_true_on_success(self) -> None:
+        """open_browser() returns True when browser opens successfully"""
+        with patch("specbook.core.server.webbrowser.open", return_value=True):
+            assert open_browser("http://localhost:7732") is True
+
+    def test_returns_false_on_exception(self) -> None:
+        """open_browser() returns False when browser fails to open"""
+        with patch("specbook.core.server.webbrowser.open", side_effect=Exception("no browser")):
+            assert open_browser("http://localhost:7732") is False
