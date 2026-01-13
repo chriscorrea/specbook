@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Specbook</title>
+    <style>
+
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+       
+        :root {
+
+            /* fonts */
+            --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            /* font sizes */
+            --text-xs: 0.75rem;    /* ~12px for timestamps, labels, chips */
+            --text-sm: 0.875rem;   /* ~14px for secondary text */
+            --text-base: 1rem;     /* ~16px for body text */
+            --text-lg: 1.125rem;   /* ~18px for emphasis and h4 rendering */
+            --text-xl: 1.25rem;    /* ~20px for h3 and section headers */
+            --text-2xl: 1.5rem;    /* ~24px for h2 and section/page titles */
+            --text-3xl: 1.875rem;  /* ~30px for h1 */
+            
+            /* Font weights */
+            --font-normal: 400;
+            --font-medium: 500;
+            --font-semibold: 600;
+            --font-bold: 700;
+            
+            /* Line heights */
+            --leading-tight: 1.25;
+            --leading-normal: 1.5;
+            --leading-relaxed: 1.625;
+            
+            /* primary (teal) */
+            --color-primary: #0d9488;
+            --color-primary-light: #5eead4;
+            --color-primary-dim: #134e4a;
+
+            /* secondary (lavender) */
+            --color-secondary: #8a86a3;
+            --color-secondary-light: #c4c1d4;
+            --color-secondary-dim: #6e6a82;
+
+            /* darks */
+            --color-bg: #1a1f2e;
+            --color-surface: #262c3a;
+            --color-surface-raised: #323a4a;
+
+            /* whites */
+            --color-text: #eef0f4;
+            --color-text-muted: #8b92a8;
+
+            /* borders */
+            --color-border: #3b4252;
+            --color-border-light: #4a5568;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: var(--font-sans);
+            font-size: var(--text-base);
+            line-height: var(--leading-normal);
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            padding: 2rem;
+            letter-spacing: 0.01em; /* improves readability a bit */
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--color-surface);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        header {
+            background: var(--color-primary-dim);
+            color: var(--color-text);
+            padding: 1.0rem 1.5rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        header img {
+            height: 1.75rem;
+            width: auto;
+        }
+        header h1 {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            margin: 0;
+        }
+        .layout {
+            display: flex;
+            height: calc(100vh - 200px);
+        }
+        .sidebar {
+            width: 280px;
+            background: var(--color-surface-raised);
+            border-right: 1px solid var(--color-border);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-border);
+            flex-shrink: 0;
+        }
+        .sidebar-header h2 {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            margin: 0;
+        }
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem 2rem;
+        }
+        .spec-list {
+            list-style: none;
+            padding: 0.5rem 0;
+        }
+        .spec-list li {
+            font-size: var(--text-sm);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--color-border);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .spec-list li:hover {
+            background-color: var(--color-surface);
+        }
+        .spec-list li:last-child {
+            border-bottom: none;
+        }
+        .spec-list li::before {
+            content: "\2022";
+            color: var(--color-primary-light);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-right: 0.5rem;
+        }
+        .spec-list > li {
+            font-weight: var(--font-medium);
+        }
+        .spec-list > li + ul {
+            display: none;
+        }
+        .spec-list > li.expanded + ul {
+            display: block;
+        }
+        .spec-list li[data-level="1"] {
+            padding-left: 2rem;
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            border-bottom: none;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--color-text-muted);
+        }
+        .empty-state p {
+            margin-bottom: 1rem;
+        }
+        .empty-state code {
+            background: var(--color-surface-raised);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: var(--text-xs);
+        }
+        h1 {
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            line-height: var(--leading-tight);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-text);
+        }
+        h2 {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            line-height: var(--leading-tight);
+            margin-top: 1.25rem;
+            margin-bottom: 0.875rem;
+            color: var(--color-text);
+        }
+        h3 {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            line-height: var(--leading-tight);
+            margin-top: 1rem;
+            margin-bottom: 0.75rem;
+            color: var(--color-text);
+        }
+        h4 {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            line-height: var(--leading-tight);
+            margin-top: 0.875rem;
+            margin-bottom: 0.625rem;
+            color: var(--color-text);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="/static/specbook_leaf_white.png" alt="Specbook logo">
+            <h1>Specbook</h1>
+        </header>
+        <div class="layout">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h2>Documements</h2>
+                </div>
+                <div class="sidebar-content">
+                    {% if specs %}
+                    <ul class="spec-list">
+                        {% for spec in specs %}
+                        <li>{{ spec.name }}</li>
+                            <ul>
+                                <!-- placeholder / example -->
+                                <li data-level="1">one</li>
+                                <li data-level="1">two</li>
+                                <li data-level="1">three</li>
+                            </ul>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div style="padding: 1rem; color: var(--color-text-muted); text-align: center;">
+                        <p>No specifications found</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </aside>
+            <main class="main-content">
+                <div class="empty-state">
+                    <p>Select a specification to view details</p>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script>
+        // expand/collapse spec list items
+        document.querySelectorAll('.spec-list > li').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const sibling = item.nextElementSibling;
+                if (sibling && sibling.tagName === 'UL') {
+                    // close any other open lists
+                    document.querySelectorAll('.spec-list > li.expanded').forEach(other => {
+                        if (other !== item) other.classList.remove('expanded');
+                    });
+                    // toggle current
+                    item.classList.toggle('expanded');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
