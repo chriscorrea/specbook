@@ -43,8 +43,8 @@ class TestFindProjectRootNotFound:
         assert result.project_root is None
         # resolve to handle macOS /var -> /private/var symlink
         assert result.searched_from.resolve() == temp_dir.resolve()
-        # searched_to should be filesystem root
-        assert result.searched_to == Path("/")
+        # use anchor to handle Windows drive letters (C:\)
+        assert result.searched_to == Path(temp_dir.resolve().anchor)
 
     def test_error_message_when_not_found(self, temp_dir: Path) -> None:
         """should provide helpful error message when not found"""
@@ -52,7 +52,8 @@ class TestFindProjectRootNotFound:
 
         assert result.error_message is not None
         assert "No spec-driven development project" in result.error_message
-        assert str(temp_dir) in result.error_message
+        # resolve to handle Windows 8.3 short paths
+        assert str(temp_dir.resolve()) in result.error_message
         assert ".specify/ or specs/" in result.error_message
 
 
