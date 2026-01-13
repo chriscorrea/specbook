@@ -2,71 +2,115 @@
 
 import os
 from pathlib import Path
+from unittest.mock import patch
 
 from typer.testing import CliRunner
 
-from specbook.cli import app
+from specbook.cli import DEFAULT_PORT, app
 
 runner = CliRunner()
 
 
-class TestCLIFromCurrentDirectory:
-    """tests for running specbook from current directory (no args)"""
+class TestCLIServerStart:
+    """tests for the serve command that starts the web server"""
 
-    def test_finds_project_from_cwd(self, project_with_both: Path) -> None:
-        """should find project when run from project root"""
-        # change to project directory for this test
-        original_cwd = os.getcwd()
-        try:
-            os.chdir(project_with_both)
-            result = runner.invoke(app)
+    def test_starts_server_from_project(self, project_with_both: Path) -> None:
+        """CLI starts server and returns prompt"""
+        # mock the server start and browser open to avoid actual side effects
+        with (
+            patch("specbook.cli.start_server") as mock_start,
+            patch("specbook.cli.open_browser") as mock_browser,
+            patch("specbook.cli.get_server_status") as mock_status,
+        ):
+            from specbook.core.models import ServerState, ServerStatus
 
-            assert result.exit_code == 0
-            assert "Project root:" in result.output
-            assert str(project_with_both) in result.output
-        finally:
-            os.chdir(original_cwd)
+            mock_status.return_value = ServerStatus(
+                port=DEFAULT_PORT,
+                state=ServerState.STOPPED,
+                pid=None,
+                project_root=None,
+            )
 
-    def test_finds_project_from_subdirectory(self, nested_subdir: Path) -> None:
-        """should find project when run from nested subdirectory"""
-        project_root = nested_subdir.parent.parent.parent
-        original_cwd = os.getcwd()
-        try:
-            os.chdir(nested_subdir)
-            result = runner.invoke(app)
+            result = runner.invoke(app, ["serve", str(project_with_both)])
 
             assert result.exit_code == 0
-            assert str(project_root) in result.output
-        finally:
-            os.chdir(original_cwd)
+            assert "Server started" in result.output
+            assert f"http://127.0.0.1:{DEFAULT_PORT}" in result.output
+            mock_start.assert_called_once()
+            mock_browser.assert_called_once()
 
+    def test_starts_server_with_custom_port(self, project_with_both: Path) -> None:
+        """CLI starts server on custom port with -p flag."""
+        with (
+            patch("specbook.cli.start_server") as mock_start,
+            patch("specbook.cli.open_browser"),
+            patch("specbook.cli.get_server_status") as mock_status,
+        ):
+            from specbook.core.models import ServerState, ServerStatus
 
-class TestCLIWithPathArgument:
-    """tests for specbook with explicit path argument"""
+            mock_status.return_value = ServerStatus(
+                port=3627,
+                state=ServerState.STOPPED,
+                pid=None,
+                project_root=None,
+            )
 
-    def test_finds_project_with_path_arg(self, project_with_both: Path) -> None:
-        """should find project when path argument provided"""
-        result = runner.invoke(app, [str(project_with_both)])
+            result = runner.invoke(app, ["serve", "-p", "3627", str(project_with_both)])
 
-        assert result.exit_code == 0
-        assert "Project root:" in result.output
-        assert str(project_with_both) in result.output
+            assert result.exit_code == 0
+            assert "3627" in result.output  
+            # verify start_server was called with custom port
+            call_args = mock_start.call_args[0][0]
+            assert call_args.port == 3627 # Dial D-O-C-S
 
-    def test_finds_project_from_subdirectory_path(self, nested_subdir: Path) -> None:
-        """should find project when searching from subdirectory path"""
-        project_root = nested_subdir.parent.parent.parent
-        result = runner.invoke(app, [str(nested_subdir)])
+    def test_auto_restarts_existing_specbook_server(
+        self, project_with_both: Path
+    ) -> None:
+        """CLI auto-restarts existing specbook server on same port"""
+        with (
+            patch("specbook.cli.start_server"),
+            patch("specbook.cli.open_browser"),
+            patch("specbook.cli.stop_server") as mock_stop,
+            patch("specbook.cli.get_server_status") as mock_status,
+        ):
+            from specbook.core.models import ServerState, ServerStatus
 
-        assert result.exit_code == 0
-        assert str(project_root) in result.output
+            mock_status.return_value = ServerStatus(
+                port=DEFAULT_PORT,
+                state=ServerState.RUNNING,
+                pid=12345,
+                project_root=project_with_both,
+            )
+
+            result = runner.invoke(app, ["serve", str(project_with_both)])
+
+            assert result.exit_code == 0
+            mock_stop.assert_called_once_with(DEFAULT_PORT)
+
+    def test_shows_error_for_port_conflict(self, project_with_both: Path) -> None:
+        """CLI shows error when port is used by non-specbook process"""
+        with patch("specbook.cli.get_server_status") as mock_status:
+            from specbook.core.models import ServerState, ServerStatus
+
+            mock_status.return_value = ServerStatus(
+                port=DEFAULT_PORT,
+                state=ServerState.PORT_CONFLICT,
+                pid=99999,
+                project_root=None,
+            )
+
+            result = runner.invoke(app, ["serve", str(project_with_both)])
+
+            assert result.exit_code == 1
+            assert "already in use" in result.output
 
 
 class TestCLIErrorCases:
-    """tests for CLI error handling"""
+    """Tests for CLI error handling"""
 
     def test_nonexistent_path_error(self) -> None:
         """should show error for non-existent path"""
-        result = runner.invoke(app, ["/nonexistent/path/that/does/not/exist"])
+        result = runner.invoke(app, ["serve", "/nonexistent/path/that/does/not/exist"])
 
         assert result.exit_code == 2
         assert "does not exist" in result.output
@@ -76,57 +120,174 @@ class TestCLIErrorCases:
         test_file = temp_dir / "test_file.txt"
         test_file.write_text("test content")
 
-        result = runner.invoke(app, [str(test_file)])
+        result = runner.invoke(app, ["serve", str(test_file)])
 
         assert result.exit_code == 2
         assert "not a directory" in result.output
 
     def test_no_project_found_error(self, temp_dir: Path) -> None:
-        """should show error when no project markers are found"""
-        result = runner.invoke(app, [str(temp_dir)])
+        """Should show error when no project markers are found."""
+        result = runner.invoke(app, ["serve", str(temp_dir)])
 
         assert result.exit_code == 1
         assert "No spec-driven development project" in result.output
 
 
 class TestCLIHelp:
-    """tests for CLI help output"""
+    """Tests for CLI help output."""
 
     def test_help_flag(self) -> None:
-        """should display help with a --help flag"""
+        """Should display help with --help flag."""
         result = runner.invoke(app, ["--help"])
 
         assert result.exit_code == 0
         # verify help shows tool description
-        assert "driven development" in result.output.lower()
+        assert "spec" in result.output.lower()
 
 
-class TestCLIMarkerDisplay:
-    """tests for displaying which markers were found"""
+class TestCLIStop:
+    """Tests for the stop command."""
 
-    def test_displays_both_markers(self, project_with_both: Path) -> None:
-        """Should display both markers when both exist"""
-        result = runner.invoke(app, [str(project_with_both)])
+    def test_stop_running_server(self) -> None:
+        """T036: specbook stop stops running server."""
+        with (
+            patch("specbook.cli.get_server_status") as mock_status,
+            patch("specbook.cli.stop_server") as mock_stop,
+        ):
+            from specbook.core.models import ServerState, ServerStatus
 
-        assert result.exit_code == 0
-        assert ".specify/" in result.output
-        assert "specs/" in result.output
+            mock_status.return_value = ServerStatus(
+                port=DEFAULT_PORT,
+                state=ServerState.RUNNING,
+                pid=12345,
+                project_root=Path("/path/to/project"),
+            )
+            mock_stop.return_value = True
 
-    def test_displays_only_specify(self, project_with_specify: Path) -> None:
-        """should display only .specify/ when only that exists"""
-        result = runner.invoke(app, [str(project_with_specify)])
+            result = runner.invoke(app, ["stop"])
 
-        assert result.exit_code == 0
-        assert ".specify/" in result.output
-        assert "specs/" not in result.output
+            assert result.exit_code == 0
+            assert "stopped" in result.output.lower()
+            mock_stop.assert_called_once_with(DEFAULT_PORT)
 
-    def test_displays_only_specs(self, project_with_specs: Path) -> None:
-        """should display only specs/ when only that exists"""
-        result = runner.invoke(app, [str(project_with_specs)])
+    def test_stop_no_server_running(self) -> None:
+        """Stop shows info when no server running."""
+        with patch("specbook.cli.get_server_status") as mock_status:
+            from specbook.core.models import ServerState, ServerStatus
 
-        assert result.exit_code == 0
-        assert "specs/" in result.output
-        # make sure we're not seeing ".specify/" as part of a path
-        lines = [l for l in result.output.split("\n") if "Found:" in l]
-        if lines:
-            assert ".specify/" not in lines[0]
+            mock_status.return_value = ServerStatus(
+                port=DEFAULT_PORT,
+                state=ServerState.STOPPED,
+                pid=None,
+                project_root=None,
+            )
+
+            result = runner.invoke(app, ["stop"])
+
+            assert result.exit_code == 0
+            assert "No server running" in result.output
+
+    def test_stop_with_custom_port(self) -> None:
+        """Stop uses custom port with -p flag."""
+        with (
+            patch("specbook.cli.get_server_status") as mock_status,
+            patch("specbook.cli.stop_server") as mock_stop,
+        ):
+            from specbook.core.models import ServerState, ServerStatus
+
+            mock_status.return_value = ServerStatus(
+                port=8080,
+                state=ServerState.RUNNING,
+                pid=12345,
+                project_root=Path("/path/to/project"),
+            )
+            mock_stop.return_value = True
+
+            result = runner.invoke(app, ["stop", "-p", "8080"])
+
+            assert result.exit_code == 0
+            mock_stop.assert_called_once_with(8080)
+
+
+class TestCLIStatus:
+    """tests the status command"""
+
+    def test_status_shows_running_server(self) -> None:
+        """specbook status shows correct state for running server"""
+        with patch("specbook.cli.get_server_status") as mock_status:
+            from specbook.core.models import ServerState, ServerStatus
+
+            mock_status.return_value = ServerStatus(
+                port=DEFAULT_PORT,
+                state=ServerState.RUNNING,
+                pid=12345,
+                project_root=Path("/path/to/project"),
+            )
+
+            result = runner.invoke(app, ["status"])
+
+            assert result.exit_code == 0
+            assert "running" in result.output.lower()
+            assert "12345" in result.output
+            assert "7732" in result.output
+
+    def test_status_shows_stopped(self) -> None:
+        """status shows info even when no server running"""
+        with patch("specbook.cli.get_server_status") as mock_status:
+            from specbook.core.models import ServerState, ServerStatus
+
+            mock_status.return_value = ServerStatus(
+                port=DEFAULT_PORT,
+                state=ServerState.STOPPED,
+                pid=None,
+                project_root=None,
+            )
+
+            result = runner.invoke(app, ["status"])
+
+            assert result.exit_code == 0
+            assert "No server running" in result.output
+
+    def test_status_with_custom_port(self) -> None:
+        """status uses custom port with -p flag"""
+        with patch("specbook.cli.get_server_status") as mock_status:
+            from specbook.core.models import ServerState, ServerStatus
+
+            mock_status.return_value = ServerStatus(
+                port=8080,
+                state=ServerState.STOPPED,
+                pid=None,
+                project_root=None,
+            )
+
+            result = runner.invoke(app, ["status", "-p", "8080"])
+
+            assert result.exit_code == 0
+            assert "8080" in result.output
+
+
+class TestCLIRestart:
+    """tests the restart command"""
+
+    def test_restart_server(self, project_with_both: Path) -> None:
+        """Restart stops and starts the server."""
+        with (
+            patch("specbook.cli.get_server_status") as mock_status,
+            patch("specbook.cli.stop_server") as mock_stop,
+            patch("specbook.cli.start_server"),
+            patch("specbook.cli.open_browser"),
+        ):
+            from specbook.core.models import ServerState, ServerStatus
+
+            mock_status.return_value = ServerStatus(
+                port=DEFAULT_PORT,
+                state=ServerState.RUNNING,
+                pid=12345,
+                project_root=project_with_both,
+            )
+
+            result = runner.invoke(app, ["restart", str(project_with_both)])
+
+            assert result.exit_code == 0
+            assert "restarted" in result.output.lower()
+            mock_stop.assert_called_once_with(DEFAULT_PORT)

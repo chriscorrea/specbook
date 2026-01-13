@@ -22,6 +22,28 @@ def success_output(path: str, markers: str) -> None:
     console.print(f"  Found: {markers}")
 
 
+def server_message(message: str, url: str | None = None, path: str | None = None) -> None:
+    """display a server status message with optional details"""
+    console.print(f"[green]✓[/green] {message}")
+    if url:
+        console.print(f"  URL: {url}")
+    if path:
+        console.print(f"  Serving: {path}")
+
+
+def server_info(message: str) -> None:
+    """display an informational server message"""
+    console.print(f"[blue]ℹ[/blue] {message}")
+
+
+def server_error(message: str, suggestion: str | None = None) -> None:
+    """display a server error message in a red panel with optional suggestion"""
+    full_message = message
+    if suggestion:
+        full_message = f"{message}\n\n{suggestion}"
+    console.print(Panel(full_message, title="Error", border_style="red"))
+
+
 @contextmanager
 def search_progress() -> Generator[None, None, None]:
     """context manager for displaying progress spinner"""

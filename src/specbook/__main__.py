@@ -1,4 +1,4 @@
-"""Entry point for python -m specbook."""
+"""entry point for python -m specbook"""
 
 from specbook.cli import app
 
