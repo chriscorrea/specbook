@@ -1,7 +1,7 @@
-<div align="center">
-    <img src="src/specbook/ui/web/static/specbook_leaf.png" alt="Specbook logo" width="64">
-    <h1>Specbook</h1>
-</div>
+<h1 align="center">
+  <img src="src/specbook/ui/web/static/specbook_leaf.png" alt="Specbook logo" width="48">
+  Specbook
+</h1>
 
 Specbook is a browser-based viewer and editor for spec-driven development (SDD) projects. Specbook facilitates review, collaboration on specs, plans, and task lists.
 
