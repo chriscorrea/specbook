@@ -76,12 +76,13 @@ class SearchResult:
         return (
             f"No spec-driven development project found.\n\n"
             f"Did not find .specify/ or specs/ at \033[1m{self.searched_from}\033[0m\n"
-            #f"Reached: {self.searched_to}\n\n"
-            #f"Specbook works in a project with .specify/ or specs/"
+            # f"Reached: {self.searched_to}\n\n"
+            # f"Specbook works in a project with .specify/ or specs/"
         )
 
 
 # server management models
+
 
 @dataclass
 class ServerConfig:

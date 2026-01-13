@@ -2,8 +2,6 @@
 
 from pathlib import Path
 
-import pytest
-
 from specbook.core.finder import find_project_root
 
 

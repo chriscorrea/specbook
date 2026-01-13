@@ -4,7 +4,6 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import psutil
-import pytest
 
 from specbook.core.models import ServerState, SpecDirectory, SpecListing
 from specbook.core.server import (
@@ -128,9 +127,7 @@ class TestGetServerStatus:
         with (
             patch("specbook.core.server.find_process_on_port") as mock_find,
             patch("specbook.core.server.is_specbook_process") as mock_is_specbook,
-            patch(
-                "specbook.core.server.get_project_root_from_process"
-            ) as mock_get_root,
+            patch("specbook.core.server.get_project_root_from_process") as mock_get_root,
         ):
             mock_find.return_value = mock_proc
             mock_is_specbook.return_value = True

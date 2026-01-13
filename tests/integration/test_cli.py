@@ -1,6 +1,5 @@
 """Integration tests for specbook CLI."""
 
-import os
 from pathlib import Path
 from unittest.mock import patch
 
@@ -58,14 +57,12 @@ class TestCLIServerStart:
             result = runner.invoke(app, ["serve", "-p", "3627", str(project_with_both)])
 
             assert result.exit_code == 0
-            assert "3627" in result.output  
+            assert "3627" in result.output
             # verify start_server was called with custom port
             call_args = mock_start.call_args[0][0]
-            assert call_args.port == 3627 # Dial D-O-C-S
+            assert call_args.port == 3627  # Dial D-O-C-S
 
-    def test_auto_restarts_existing_specbook_server(
-        self, project_with_both: Path
-    ) -> None:
+    def test_auto_restarts_existing_specbook_server(self, project_with_both: Path) -> None:
         """CLI auto-restarts existing specbook server on same port"""
         with (
             patch("specbook.cli.start_server"),
