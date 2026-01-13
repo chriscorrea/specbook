@@ -18,7 +18,6 @@ from specbook.ui.console import (
     server_error,
     server_info,
     server_message,
-    success_output,
 )
 
 # 📞 SPEC
@@ -143,9 +142,7 @@ def stop(
         raise typer.Exit(code=0)
 
     if status.state == ServerState.PORT_CONFLICT:
-        server_error(
-            f"Port {port} is in use by another application"
-        )
+        server_error(f"Port {port} is in use by another application")
         raise typer.Exit(code=1)
 
     # stop the specbook server

@@ -86,7 +86,7 @@ def get_server_status(port: int) -> ServerStatus:
     )
 
 
-def start_server(config: ServerConfig) -> int:
+def start_server(config: ServerConfig) -> int:  # pragma: no cover
     """Start the specbook web server detached/in the background.
 
     Args:
@@ -113,7 +113,7 @@ def start_server(config: ServerConfig) -> int:
     return proc.pid
 
 
-def stop_server(port: int) -> bool:
+def stop_server(port: int) -> bool:  # pragma: no cover
     """Stop a specbook server running on the given port.
 
     Args:

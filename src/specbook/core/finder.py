@@ -37,7 +37,7 @@ def find_project_root(start_path: Path) -> SearchResult:
         # check if we've reached the filesystem root
         parent = current.parent
         if parent == current:
-            # at root, one final check 
+            # at root, one final check
             return SearchResult(
                 found=False,
                 project_root=None,
