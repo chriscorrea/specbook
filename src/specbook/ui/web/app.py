@@ -264,22 +264,23 @@ def _is_safe_path(project_root: Path, requested_path: Path) -> bool:
         return False
 
 
-async def api_document(request: Request) -> JSONResponse:
-    """fetch and render a markdown document"""
-    if _project_root is None:
-        return JSONResponse({"error": "Server not configured"}, status_code=500)
+def _validate_document_path(path_param: str | None) -> tuple[Path | None, JSONResponse | None]:
+    """validate document path and return (full_path, error_response)
 
-    # get path parameter
-    path_param = request.query_params.get("path")
+    Returns (full_path, None) on success, or (None, error_response) on failure.
+    """
+    if _project_root is None:
+        return None, JSONResponse({"error": "Server not configured"}, status_code=500)
+
     if not path_param:
-        return JSONResponse(
+        return None, JSONResponse(
             {"error": "Invalid path", "detail": "Missing path parameter"},
             status_code=400,
         )
 
     # only allow .md files
     if not path_param.endswith(".md"):
-        return JSONResponse(
+        return None, JSONResponse(
             {"error": "Invalid path", "detail": "Only markdown files allowed"},
             status_code=400,
         )
@@ -289,10 +290,22 @@ async def api_document(request: Request) -> JSONResponse:
 
     # security: check path is within project root
     if not _is_safe_path(_project_root, full_path):
-        return JSONResponse(
+        return None, JSONResponse(
             {"error": "Invalid path", "detail": "Path outside project root"},
             status_code=400,
         )
+
+    return full_path, None
+
+
+async def api_document(request: Request) -> JSONResponse:
+    """fetch and render a markdown doc"""
+    path_param = request.query_params.get("path")
+    full_path, error = _validate_document_path(path_param)
+    if error:
+        return error
+
+    assert full_path is not None  # for type checks
 
     # check if file exists
     if not full_path.is_file():
@@ -334,6 +347,201 @@ async def api_document(request: Request) -> JSONResponse:
         )
 
 
+async def api_document_raw(request: Request) -> JSONResponse:
+    """fetch raw markdown content for editing"""
+    path_param = request.query_params.get("path")
+    full_path, error = _validate_document_path(path_param)
+    if error:
+        return error
+
+    assert full_path is not None
+
+    if not full_path.is_file():
+        return JSONResponse(
+            {"error": "Document not found", "path": path_param},
+            status_code=404,
+        )
+
+    try:
+        content = full_path.read_text(encoding="utf-8")
+        stat = full_path.stat()
+        return JSONResponse(
+            {
+                "path": path_param,
+                "raw": content,
+                "modified": stat.st_mtime,
+            }
+        )
+    except OSError:
+        return JSONResponse(
+            {"error": "Document not found", "path": path_param},
+            status_code=404,
+        )
+
+
+async def api_document_save(request: Request) -> JSONResponse:
+    """save edited markdown content to file"""
+    if _project_root is None:
+        return JSONResponse({"error": "Server not configured"}, status_code=500)
+
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse(
+            {"error": "Invalid request", "detail": "Invalid JSON body"},
+            status_code=400,
+        )
+
+    path_param = body.get("path")
+    content = body.get("content")
+
+    if content is None:
+        return JSONResponse(
+            {"error": "Invalid request", "detail": "Missing content field"},
+            status_code=400,
+        )
+
+    full_path, error = _validate_document_path(path_param)
+    if error:
+        return error
+
+    assert full_path is not None
+
+    # check if file exists
+    if not full_path.is_file():
+        return JSONResponse(
+            {"error": "Document not found", "path": path_param},
+            status_code=404,
+        )
+
+    try:
+        full_path.write_text(content, encoding="utf-8")
+        stat = full_path.stat()
+        return JSONResponse(
+            {
+                "success": True,
+                "path": path_param,
+                "modified": stat.st_mtime,
+            }
+        )
+    except PermissionError:
+        return JSONResponse(
+            {"error": "Save failed", "detail": "Permission denied"},
+            status_code=403,
+        )
+    except OSError as e:
+        return JSONResponse(
+            {"error": "Save failed", "detail": str(e)},
+            status_code=500,
+        )
+
+
+async def api_checkbox_toggle(request: Request) -> JSONResponse:
+    """toggle a checkbox on a particular line"""
+    if _project_root is None:
+        return JSONResponse({"error": "Server not configured"}, status_code=500)
+
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse(
+            {"error": "Invalid request", "detail": "Invalid JSON body"},
+            status_code=400,
+        )
+
+    path_param = body.get("path")
+    line_number = body.get("lineNumber")
+    checked = body.get("checked")
+
+    if line_number is None or not isinstance(line_number, int) or line_number < 1:
+        return JSONResponse(
+            {"error": "Invalid line number", "detail": "lineNumber must be a positive integer"},
+            status_code=400,
+        )
+
+    if checked is None or not isinstance(checked, bool):
+        return JSONResponse(
+            {"error": "Invalid request", "detail": "checked must be a boolean"},
+            status_code=400,
+        )
+
+    full_path, error = _validate_document_path(path_param)
+    if error:
+        return error
+
+    assert full_path is not None
+
+    if not full_path.is_file():
+        return JSONResponse(
+            {"error": "Document not found", "path": path_param},
+            status_code=404,
+        )
+
+    try:
+        content = full_path.read_text(encoding="utf-8")
+        lines = content.split("\n")
+
+        # validate line number is in range
+        if line_number > len(lines):
+            return JSONResponse(
+                {
+                    "error": "Invalid line number",
+                    "detail": f"Line {line_number} exceeds file length",
+                },
+                status_code=400,
+            )
+
+        # get the line (1-indexed)
+        line_idx = line_number - 1
+        line = lines[line_idx]
+
+        # check if line contains checkbox
+        checkbox_unchecked = re.match(r"^(\s*-\s*)\[ \](.*)$", line)
+        checkbox_checked = re.match(r"^(\s*-\s*)\[[xX]\](.*)$", line)
+
+        if not checkbox_unchecked and not checkbox_checked:
+            return JSONResponse(
+                {
+                    "error": "Invalid checkbox",
+                    "detail": f"Line {line_number} is not a checkbox item",
+                },
+                status_code=400,
+            )
+
+        # toggle the box
+        if checked:
+            # set to *checked*
+            if checkbox_unchecked:
+                lines[line_idx] = f"{checkbox_unchecked.group(1)}[x]{checkbox_unchecked.group(2)}"
+        else:
+            # set to *unchecked*
+            if checkbox_checked:
+                lines[line_idx] = f"{checkbox_checked.group(1)}[ ]{checkbox_checked.group(2)}"
+
+        # write back
+        new_content = "\n".join(lines)
+        full_path.write_text(new_content, encoding="utf-8")
+
+        return JSONResponse(
+            {
+                "success": True,
+                "path": path_param,
+                "lineNumber": line_number,
+                "checked": checked,
+            }
+        )
+    except PermissionError:
+        return JSONResponse(
+            {"error": "Save failed", "detail": "Permission denied"},
+            status_code=403,
+        )
+    except OSError as e:
+        return JSONResponse(
+            {"error": "Save failed", "detail": str(e)},
+            status_code=500,
+        )
+
+
 def create_app(project_root: Path) -> Starlette:
     """Create a Starlette application for the given project.
 
@@ -349,6 +557,9 @@ def create_app(project_root: Path) -> Starlette:
     routes = [
         Route("/", index),
         Route("/api/document", api_document),
+        Route("/api/document/raw", api_document_raw),
+        Route("/api/document", api_document_save, methods=["POST"]),
+        Route("/api/checkbox", api_checkbox_toggle, methods=["POST"]),
         Mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static"),
     ]
     return Starlette(routes=routes)
