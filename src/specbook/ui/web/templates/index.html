@@ -212,6 +212,357 @@
             margin-bottom: 0.625rem;
             color: var(--color-text);
         }
+
+        /* markdown content styling */
+        .markdown-content h1:first-child {
+            margin-top: 0;
+        }
+        .markdown-content p {
+            margin-bottom: 1rem;
+        }
+        .markdown-content ul,
+        .markdown-content ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.25rem;
+        }
+        .markdown-content code {
+            background: var(--color-surface-raised);
+            padding: 0.125rem 0.375rem;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+        }
+        .markdown-content pre {
+            background: var(--color-surface-raised);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            font-size: var(--text-sm);
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid var(--color-primary);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: var(--color-text-muted);
+        }
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        .markdown-content th,
+        .markdown-content td {
+            border: 1px solid var(--color-border);
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+        .markdown-content th {
+            background: var(--color-surface-raised);
+            font-weight: var(--font-semibold);
+        }
+        .markdown-content a {
+            color: var(--color-primary-light);
+            text-decoration: none;
+        }
+        .markdown-content a:hover {
+            text-decoration: underline;
+        }
+        .markdown-content hr {
+            border: none;
+            border-top: 1px solid var(--color-border);
+            margin: 1.5rem 0;
+        }
+        .markdown-content strong {
+            font-weight: var(--font-semibold);
+        }
+
+        /* task list checkboxes */
+        .markdown-content .contains-task-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .markdown-content .task-list-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content .task-list-item-checkbox {
+            appearance: none;
+            width: 1.125rem;
+            height: 1.125rem;
+            border: 2px solid var(--color-border-light);
+            border-radius: 3px;
+            background: transparent;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+            margin-left: 0.25rem;
+            margin-right: 0.25rem;
+        }
+        .markdown-content .task-list-item-checkbox:checked {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+            background-size: 12px;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* loading state */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: var(--color-text-muted);
+        }
+
+        /* sidebar section styling */
+        .sidebar-section {
+            border-bottom: 1px solid var(--color-border);
+        }
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+        .sidebar-section-header {
+            padding: 0.75rem 1rem;
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+        }
+        .sidebar-section-header:hover {
+            color: var(--color-text);
+        }
+        .sidebar-section-content {
+            display: none;
+        }
+        .sidebar-section-header.expanded + .sidebar-section-content {
+            display: block;
+        }
+
+        /* spec header styling */
+        .spec-header {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            transition: background-color 0.2s ease;
+        }
+        .spec-header:hover {
+            background-color: var(--color-surface);
+        }
+        .spec-header::before {
+            content: "\25B6";
+            font-size: var(--text-xs);
+            color: var(--color-primary-light);
+            margin-right: 0.5rem;
+            transition: transform 0.2s ease;
+        }
+        .spec-header.expanded::before {
+            transform: rotate(90deg);
+        }
+
+        /* document list styling */
+        .doc-list {
+            list-style: none;
+            display: none;
+            background: var(--color-surface);
+        }
+        .spec-header.expanded + .doc-list {
+            display: block;
+        }
+        .doc-item {
+            padding: 0.4rem 1rem 0.4rem 2rem;
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .doc-item:hover {
+            background-color: var(--color-surface-raised);
+            color: var(--color-text);
+        }
+        .doc-item::before {
+            content: "\2022";
+            color: var(--color-primary-light);
+            margin-right: 0.5rem;
+        }
+        .doc-item.active {
+            background-color: var(--color-primary-dim);
+            color: var(--color-text);
+        }
+
+        /* project document items (no indent like spec docs) */
+        .project-doc-item {
+            padding: 0.5rem 1rem;
+            font-size: var(--text-sm);
+        }
+        .project-doc-item::before {
+            content: "\25C6";
+            color: var(--color-secondary-light);
+            margin-right: 0.5rem;
+        }
+
+        /* completed items styling */
+        .completed {
+            color: var(--color-text-muted);
+        }
+        .completed::before {
+            color: var(--color-text-muted);
+        }
+        .spec-header.completed::before {
+            color: var(--color-text-muted);
+        }
+
+        /* spec header with active child document */
+        .spec-header.has-active {
+            background-color: var(--color-surface);
+            border-left: 3px solid var(--color-primary);
+        }
+
+        /* document metadata styling */
+        .doc-metadata {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--color-border);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .doc-metadata:hover {
+            background-color: var(--color-surface-raised);
+        }
+        .doc-metadata-extra {
+            display: none;
+            padding-top: 0.5rem;
+            font-style: italic;
+        }
+        .doc-metadata.expanded .doc-metadata-extra {
+            display: block;
+        }
+
+        /* editable section styling */
+        .editable-section {
+            position: relative;
+            padding: 0.5rem;
+            margin: -0.5rem;
+            margin-bottom: 0;
+            border-radius: 6px;
+            transition: background-color 0.15s ease;
+        }
+        .editable-section:hover {
+            background-color: var(--color-surface-raised);
+            cursor: text;
+        }
+        .editable-section.editing {
+            background-color: transparent;
+            cursor: default;
+        }
+        .editable-section.editing:hover {
+            background-color: transparent;
+        }
+
+        /* section editor (editable textarea) */
+        .section-editor {
+            width: 100%;
+            min-height: 100px;
+            padding: 0.75rem;
+            background: var(--color-surface);
+            border: 1px solid var(--color-primary);
+            border-radius: 6px;
+            color: var(--color-text);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            line-height: var(--leading-relaxed);
+            resize: vertical;
+            outline: none;
+        }
+        .section-editor:focus {
+            border-color: var(--color-primary-light);
+            box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
+        }
+
+        /* section action buttons */
+        .section-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            display: flex;
+            gap: 0.25rem;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+        .editable-section.editing .section-actions {
+            opacity: 1;
+        }
+        .section-action-btn {
+            width: 1.75rem;
+            height: 1.75rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-sm);
+            transition: background-color 0.15s ease, transform 0.1s ease;
+        }
+        .section-action-btn:hover {
+            transform: scale(1.1);
+        }
+        .section-action-btn.save {
+            background: var(--color-primary);
+            color: white;
+        }
+        .section-action-btn.save:hover {
+            background: var(--color-primary-light);
+        }
+        .section-action-btn.cancel {
+            background: var(--color-surface-raised);
+            color: var(--color-text-muted);
+        }
+        .section-action-btn.cancel:hover {
+            background: var(--color-border);
+            color: var(--color-text);
+        }
+
+        /* saving indicator */
+        .section-saving {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            padding: 0.25rem 0.5rem;
+            background: var(--color-surface-raised);
+            border-radius: 4px;
+        }
+
+        /* error msg */
+        .section-error {
+            margin-top: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 4px;
+            color: #fca5a5;
+            font-size: var(--text-sm);
+        }
     </style>
 </head>
 <body>
@@ -223,21 +574,36 @@
         <div class="layout">
             <aside class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <h2>Documements</h2>
+                    <h2>Documents</h2>
                 </div>
                 <div class="sidebar-content">
+                    <!-- project section (collapsed by default) -->
+                    {% if project_documents %}
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-header">Project Guides</div>
+                        <div class="sidebar-section-content">
+                            {% for doc in project_documents %}
+                            <div class="project-doc-item doc-item" data-path="{{ doc.path }}">{{ doc.name }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- specifications section (expanded by default) -->
                     {% if specs %}
-                    <ul class="spec-list">
-                        {% for spec in specs %}
-                        <li>{{ spec.name }}</li>
-                            <ul>
-                                <!-- placeholder / example -->
-                                <li data-level="1">one</li>
-                                <li data-level="1">two</li>
-                                <li data-level="1">three</li>
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-header expanded">Specifications</div>
+                        <div class="sidebar-section-content">
+                            {% for spec in specs %}
+                            <div class="spec-header{% if spec.is_complete %} completed{% endif %}" data-spec="{{ spec.name }}">{{ spec.name }}</div>
+                            <ul class="doc-list">
+                                {% for doc in spec.documents %}
+                                <li class="doc-item{% if spec.is_complete %} completed{% endif %}" data-path="specs/{{ spec.name }}/{{ doc.name }}">{{ doc.display_name }}</li>
+                                {% endfor %}
                             </ul>
-                        {% endfor %}
-                    </ul>
+                            {% endfor %}
+                        </div>
+                    </div>
                     {% else %}
                     <div style="padding: 1rem; color: var(--color-text-muted); text-align: center;">
                         <p>No specifications found</p>
@@ -245,26 +611,826 @@
                     {% endif %}
                 </div>
             </aside>
-            <main class="main-content">
-                <div class="empty-state">
-                    <p>Select a specification to view details</p>
+            <main class="main-content" id="main-content">
+                <div class="empty-state" id="empty-state">
+                    <p>Select a document to view its contents</p>
                 </div>
+                <div class="markdown-content" id="document-content" style="display: none;"></div>
             </main>
         </div>
     </div>
     <script>
-        // expand/collapse spec list items
-        document.querySelectorAll('.spec-list > li').forEach(item => {
+        // state for current document
+        let currentDocPath = null;
+        let currentRawContent = null;
+        let currentEditingSection = null;
+
+        // format timestamp as relative time (e.g., "3 days ago")
+        function formatRelativeTime(timestamp) {
+            const now = Date.now() / 1000;
+            const diff = now - timestamp;
+            const seconds = Math.floor(diff);
+            const minutes = Math.floor(diff / 60);
+            const hours = Math.floor(diff / 3600);
+            const days = Math.floor(diff / 86400);
+
+            if (seconds < 60) return 'just now';
+            if (minutes === 1) return '1 minute ago';
+            if (minutes < 60) return `${minutes} minutes ago`;
+            if (hours === 1) return '1 hour ago';
+            if (hours < 24) return `${hours} hours ago`;
+            if (days === 1) return 'yesterday';
+            if (days < 30) return `${days} days ago`;
+            if (days < 60) return '1 month ago';
+            if (days < 365) return `${Math.floor(days / 30)} months ago`;
+            return `${Math.floor(days / 365)} years ago`;
+        }
+
+        // format timestamp as date (e.g., "Dec 9, 1906")
+        function formatDate(timestamp) {
+            return new Date(timestamp * 1000).toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric'
+            });
+        }
+
+        // parse raw markdown into sections at heading boundaries
+        function parseSections(rawContent) {
+            const lines = rawContent.split('\n');
+            const sections = [];
+            let currentSection = { startLine: 0, lines: [] };
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                // check if line is a H1-H3 heading
+                if (/^#{1,3}\s/.test(line) && currentSection.lines.length > 0) {
+                    // save current section, start new one
+                    currentSection.endLine = i - 1;
+                    sections.push(currentSection);
+                    currentSection = { startLine: i, lines: [] };
+                }
+                currentSection.lines.push(line);
+            }
+
+            // save last section
+            currentSection.endLine = lines.length - 1;
+            sections.push(currentSection);
+
+            return sections;
+        }
+
+        // wrap rendered HTML content in editable section containers
+        function wrapSectionsInContainers(docContent, sections) {
+            // find all headings (H1-H3) in the rendered content
+            const headings = docContent.querySelectorAll('h1, h2, h3');
+            const allElements = Array.from(docContent.children);
+
+            // if no headings, wrap entire content as one section
+            if (headings.length === 0) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'editable-section';
+                wrapper.dataset.sectionIndex = '0';
+                while (docContent.firstChild) {
+                    wrapper.appendChild(docContent.firstChild);
+                }
+                docContent.appendChild(wrapper);
+                return;
+            }
+
+            // group elements by section based on heading positions
+            let sectionIndex = 0;
+            let currentWrapper = null;
+            let foundFirstHeading = false;
+
+            // create a wrapper for any preabmle content (before first heading)
+            const preambleWrapper = document.createElement('div');
+            preambleWrapper.className = 'editable-section';
+            preambleWrapper.dataset.sectionIndex = '0';
+
+            for (let i = 0; i < allElements.length; i++) {
+                const el = allElements[i];
+                const isHeading = /^H[123]$/.test(el.tagName);
+
+                // skip doc-metadata element
+                if (el.classList && el.classList.contains('doc-metadata')) {
+                    continue;
+                }
+
+                if (isHeading) {
+                    // if we have preamble content, finalize it
+                    if (!foundFirstHeading && preambleWrapper.children.length > 0) {
+                        docContent.insertBefore(preambleWrapper, el);
+                        sectionIndex++;
+                    }
+                    foundFirstHeading = true;
+
+                    // start new section with this heading
+                    currentWrapper = document.createElement('div');
+                    currentWrapper.className = 'editable-section';
+                    currentWrapper.dataset.sectionIndex = String(sectionIndex);
+                    sectionIndex++;
+                }
+
+                if (!foundFirstHeading) {
+                    // content before first heading goes to preamble
+                    preambleWrapper.appendChild(el.cloneNode(true));
+                } else if (currentWrapper) {
+                    currentWrapper.appendChild(el.cloneNode(true));
+                    // check if next element is a heading or end
+                    const next = allElements[i + 1];
+                    if (!next || (next.tagName && /^H[123]$/.test(next.tagName)) ||
+                        (next.classList && next.classList.contains('doc-metadata'))) {
+                        // insert wrapper before the original element position
+                        el.parentNode.insertBefore(currentWrapper, el);
+                    }
+                }
+            }
+
+            // remove original elements (they're now in wrappers)
+            allElements.forEach(el => {
+                if (!el.classList?.contains('editable-section') &&
+                    !el.classList?.contains('doc-metadata') &&
+                    el.parentNode === docContent) {
+                    el.remove();
+                }
+            });
+        }
+
+        // (simpler) rebuild content with sections
+        function rebuildWithSections(docContent, rawContent) {
+            const sections = parseSections(rawContent);
+
+            // find the metadata element to preserve it
+            const metadataEl = docContent.querySelector('.doc-metadata');
+            const metadataHtml = metadataEl ? metadataEl.outerHTML : '';
+
+            // clear content
+            docContent.innerHTML = '';
+
+            // render each section in its own wrapper
+            sections.forEach((section, index) => {
+                const sectionRaw = section.lines.join('\n');
+                const wrapper = document.createElement('div');
+                wrapper.className = 'editable-section';
+                wrapper.dataset.sectionIndex = String(index);
+                wrapper.dataset.startLine = String(section.startLine);
+                wrapper.dataset.endLine = String(section.endLine);
+
+                // render the section markdown to HTML
+                // use a temp div to parse it, then transfer
+                const tempDiv = document.createElement('div');
+                // send to server to render
+                wrapper.innerHTML = '<div class="loading">...</div>';
+                wrapper._rawContent = sectionRaw;
+                wrapper._needsRender = true;
+
+                docContent.appendChild(wrapper);
+
+                // insert metadata after first section's first heading
+                if (index === 0 && metadataHtml) {
+                    const firstHeading = wrapper.querySelector('h1, h2, h3, h4, h5, h6');
+                    if (firstHeading) {
+                        firstHeading.insertAdjacentHTML('afterend', metadataHtml);
+                    }
+                }
+            });
+
+            // render all sections at once
+            renderAllSections(docContent, sections);
+        }
+
+        // render sections using server markdown rendering
+        async function renderAllSections(docContent, sections) {
+            // for simplicity, re-fetch the rendered document
+            // ensures consistent rendering with server
+            try {
+                const response = await fetch(`/api/document?path=${encodeURIComponent(currentDocPath)}`);
+                if (!response.ok) return;
+                const data = await response.json();
+
+                // parse the HTML and distribute to sections
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = data.content;
+
+                // collect all elements
+                const elements = Array.from(tempDiv.children);
+                let sectionIndex = 0;
+                let sectionWrapper = docContent.querySelector(`[data-section-index="0"]`);
+                let foundFirstHeading = false;
+
+                if (sectionWrapper) {
+                    sectionWrapper.innerHTML = '';
+                }
+
+                elements.forEach((el) => {
+                    const isHeading = /^H[123]$/.test(el.tagName);
+
+                    if (isHeading && foundFirstHeading) {
+                        // move to next section
+                        sectionIndex++;
+                        sectionWrapper = docContent.querySelector(`[data-section-index="${sectionIndex}"]`);
+                        if (sectionWrapper) {
+                            sectionWrapper.innerHTML = '';
+                        }
+                    }
+
+                    if (isHeading) {
+                        foundFirstHeading = true;
+                    }
+
+                    if (sectionWrapper) {
+                        sectionWrapper.appendChild(el.cloneNode(true));
+                    }
+                });
+
+                // add metadata after first section's first heading
+                const firstSection = docContent.querySelector('[data-section-index="0"]');
+                if (firstSection) {
+                    const firstHeading = firstSection.querySelector('h1, h2, h3, h4, h5, h6');
+                    if (firstHeading && !firstSection.querySelector('.doc-metadata')) {
+                        const metadataHtml = `<div class="doc-metadata">
+                            <span class="doc-metadata-summary">Last updated ${formatRelativeTime(data.modified)} · Created ${formatDate(data.created)}</span>
+                            <div class="doc-metadata-extra">[placeholder for detailed metadata]</div>
+                        </div>`;
+                        firstHeading.insertAdjacentHTML('afterend', metadataHtml);
+
+                        // make metadata clickable
+                        const metadata = firstSection.querySelector('.doc-metadata');
+                        if (metadata) {
+                            metadata.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                metadata.classList.toggle('expanded');
+                            });
+                        }
+                    }
+                }
+
+                // add click handlers to sections
+                setupSectionClickHandlers(docContent);
+
+            } catch (err) {
+                console.error('Failed to render sections:', err);
+            }
+        }
+
+        // setup click handlers for editable sections
+        function setupSectionClickHandlers(docContent) {
+            docContent.querySelectorAll('.editable-section').forEach(section => {
+                section.addEventListener('click', (e) => {
+                    // don't trigger if clicking on metadata or links
+                    if (e.target.closest('.doc-metadata') ||
+                        e.target.tagName === 'A' ||
+                        e.target.closest('.section-actions') ||
+                        e.target.classList.contains('task-list-item-checkbox')) {
+                        return;
+                    }
+
+                    // don't open if already editing
+                    if (section.classList.contains('editing')) {
+                        return;
+                    }
+
+                    // close any other open editor first
+                    if (currentEditingSection && currentEditingSection !== section) {
+                        cancelEdit(currentEditingSection);
+                    }
+
+                    openEditor(section);
+                });
+            });
+
+            // setup checkbox click handlers
+            setupCheckboxHandlers(docContent);
+        }
+
+        // setup checkbox handlers for interactive toggling
+        function setupCheckboxHandlers(docContent) {
+            // find all checkboxes and make them interactive
+            docContent.querySelectorAll('.task-list-item-checkbox').forEach((checkbox) => {
+                // remove disabled attribute so click events fire
+                // (markdown-it renders checkboxes with disabled="disabled")
+                checkbox.removeAttribute('disabled');
+
+                // ensure checkbox is clickable (css will set cursor: pointer)
+                checkbox.style.pointerEvents = 'auto';
+
+                checkbox.addEventListener('click', async (e) => {
+                    // browser has already toggled checkbox.checked
+                    e.stopPropagation();
+
+                    // find the line number for this checkbox
+                    const lineNumber = findCheckboxLineNumber(checkbox);
+                    if (!lineNumber) {
+                        console.error('[Checkbox] Could not find line number for checkbox');
+                        // rollback since we can't save
+                        checkbox.checked = !checkbox.checked;
+                        return;
+                    }
+
+                    const newChecked = checkbox.checked;
+                    checkbox.disabled = true;
+
+                    const payload = {
+                        path: currentDocPath,
+                        lineNumber: lineNumber,
+                        checked: newChecked
+                    };
+                    console.log('[Checkbox] Sending to API:', payload);
+
+                    try {
+                        const response = await fetch('/api/checkbox', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const data = await response.json();
+                        console.log('[Checkbox] API response:', response.status, data);
+
+                        if (!response.ok) {
+                            // rollback on error
+                            checkbox.checked = !newChecked;
+                            console.error('[Checkbox] Toggle failed:', data);
+                        } else {
+                            // sync attribute with property so innerHTML captures correct state
+                            if (newChecked) {
+                                checkbox.setAttribute('checked', 'checked');
+                            } else {
+                                checkbox.removeAttribute('checked');
+                            }
+                            // update raw content cache
+                            if (currentRawContent) {
+                                const lines = currentRawContent.split('\n');
+                                if (lineNumber <= lines.length) {
+                                    const line = lines[lineNumber - 1];
+                                    if (newChecked) {
+                                        lines[lineNumber - 1] = line.replace(/\[ \]/, '[x]');
+                                    } else {
+                                        lines[lineNumber - 1] = line.replace(/\[[xX]\]/, '[ ]');
+                                    }
+                                    currentRawContent = lines.join('\n');
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        // rollback on error
+                        checkbox.checked = !newChecked;
+                        console.error('[Checkbox] Network error:', err);
+                    } finally {
+                        checkbox.disabled = false;
+                    }
+                });
+            });
+        }
+
+        // find line number for a checkbox by its position in the document
+        function findCheckboxLineNumber(checkbox) {
+            if (!currentRawContent) return null;
+
+            // find which checkbox this is (0-indexed)
+            const docContent = document.getElementById('document-content');
+            const allCheckboxes = docContent.querySelectorAll('.task-list-item-checkbox');
+            let checkboxIndex = -1;
+            allCheckboxes.forEach((cb, idx) => {
+                if (cb === checkbox) checkboxIndex = idx;
+            });
+
+            if (checkboxIndex === -1) return null;
+
+            // find the Nth checkbox line in raw content
+            const lines = currentRawContent.split('\n');
+            let checkboxCount = 0;
+            for (let i = 0; i < lines.length; i++) {
+                if (/^\s*-\s*\[[xX ]\]/.test(lines[i])) {
+                    if (checkboxCount === checkboxIndex) {
+                        return i + 1; // 1-indexed line number
+                    }
+                    checkboxCount++;
+                }
+            }
+
+            return null;
+        }
+
+        // open editor for a section
+        async function openEditor(section) {
+            const sectionIndex = parseInt(section.dataset.sectionIndex);
+            const startLine = parseInt(section.dataset.startLine);
+            const endLine = parseInt(section.dataset.endLine);
+
+            // fetch raw content if not cached
+            if (!currentRawContent) {
+                try {
+                    const response = await fetch(`/api/document/raw?path=${encodeURIComponent(currentDocPath)}`);
+                    if (!response.ok) {
+                        showError(section, 'Failed to load document for editing');
+                        return;
+                    }
+                    const data = await response.json();
+                    currentRawContent = data.raw;
+                } catch (err) {
+                    showError(section, 'Failed to load document for editing');
+                    return;
+                }
+            }
+
+            // extract section content
+            const lines = currentRawContent.split('\n');
+            const sectionLines = lines.slice(startLine, endLine + 1);
+            const sectionRaw = sectionLines.join('\n');
+
+            // save original HTML for cancel
+            section._originalHTML = section.innerHTML;
+            section._originalRaw = sectionRaw;
+
+            // replace with editor
+            section.classList.add('editing');
+            section.innerHTML = `
+                <div class="section-actions">
+                    <button class="section-action-btn save" title="Save (click outside or Cmd+S)">✓</button>
+                    <button class="section-action-btn cancel" title="Cancel (Escape)">✗</button>
+                </div>
+                <textarea class="section-editor">${escapeHtml(sectionRaw)}</textarea>
+            `;
+
+            const textarea = section.querySelector('.section-editor');
+            const saveBtn = section.querySelector('.section-action-btn.save');
+            const cancelBtn = section.querySelector('.section-action-btn.cancel');
+
+            // auto-size textarea
+            autoSizeTextarea(textarea);
+            textarea.addEventListener('input', () => autoSizeTextarea(textarea));
+
+            // focus textarea
+            textarea.focus();
+
+            // keyboard handlers
+            textarea.addEventListener('keydown', (e) => {
+                // esc to cancel
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelEdit(section);
+                    return;
+                }
+
+                // cmd/ctrl+S to save
+                if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+                    e.preventDefault();
+                    saveSection(section);
+                    return;
+                }
+
+                // cmd/ctrl+B for bold
+                if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
+                    e.preventDefault();
+                    wrapSelection(textarea, '**', '**');
+                    return;
+                }
+
+                // cmd/ctrl+I for italic
+                if ((e.metaKey || e.ctrlKey) && e.key === 'i') {
+                    e.preventDefault();
+                    wrapSelection(textarea, '*', '*');
+                    return;
+                }
+            });
+
+            // blur off textarea to save
+            textarea.addEventListener('blur', (e) => {
+                // slight delay to check if click was on action button
+                setTimeout(() => {
+                    if (section.classList.contains('editing') &&
+                        !section.contains(document.activeElement)) {
+                        saveSection(section);
+                    }
+                }, 153);  // 153ms delay
+            });
+
+            // action button handlers
+            saveBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                saveSection(section);
+            });
+
+            cancelBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                cancelEdit(section);
+            });
+
+            currentEditingSection = section;
+        }
+
+        // auto-size textarea to fit content
+        function autoSizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 500) + 'px';
+        }
+
+        // wrap selected text with markers (for bold/italic)
+        function wrapSelection(textarea, before, after) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+
+            if (start === end) {
+                // no selection - insert markers with cursor in middle
+                const newText = text.slice(0, start) + before + after + text.slice(end);
+                textarea.value = newText;
+                textarea.selectionStart = textarea.selectionEnd = start + before.length;
+            } else {
+                // wrap selection
+                const selected = text.slice(start, end);
+                const newText = text.slice(0, start) + before + selected + after + text.slice(end);
+                textarea.value = newText;
+                textarea.selectionStart = start + before.length;
+                textarea.selectionEnd = end + before.length;
+            }
+
+            textarea.focus();
+            autoSizeTextarea(textarea);
+        }
+
+        // save section content
+        async function saveSection(section) {
+            const textarea = section.querySelector('.section-editor');
+            if (!textarea) return;
+
+            const newContent = textarea.value;
+            const startLine = parseInt(section.dataset.startLine);
+            const endLine = parseInt(section.dataset.endLine);
+
+            // if content unchanged, just cancel
+            if (newContent === section._originalRaw) {
+                cancelEdit(section);
+                return;
+            }
+
+            // show saving indicator
+            const actions = section.querySelector('.section-actions');
+            if (actions) {
+                actions.innerHTML = '<span class="section-saving">Saving...</span>';
+            }
+
+            // reconstruct full document with edited section
+            const lines = currentRawContent.split('\n');
+            const newLines = [
+                ...lines.slice(0, startLine),
+                ...newContent.split('\n'),
+                ...lines.slice(endLine + 1)
+            ];
+            const fullContent = newLines.join('\n');
+
+            try {
+                const response = await fetch('/api/document', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        path: currentDocPath,
+                        content: fullContent
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    showError(section, error.detail || error.error || 'Failed to save');
+                    return;
+                }
+
+                // update cached raw content
+                currentRawContent = fullContent;
+
+                // reload the document to get fresh rendered content
+                await loadDocument(currentDocPath);
+
+            } catch (err) {
+                showError(section, 'Failed to save: network error');
+            }
+        }
+
+        // cancel edit and restore original content
+        function cancelEdit(section) {
+            if (section._originalHTML) {
+                section.innerHTML = section._originalHTML;
+                section.classList.remove('editing');
+                // Re-attach checkbox handlers for restored content
+                setupCheckboxHandlers(section);
+            }
+            if (currentEditingSection === section) {
+                currentEditingSection = null;
+            }
+        }
+
+        // show error message in section
+        function showError(section, message) {
+            const existing = section.querySelector('.section-error');
+            if (existing) existing.remove();
+
+            const textarea = section.querySelector('.section-editor');
+            if (textarea) {
+                textarea.insertAdjacentHTML('afterend',
+                    `<div class="section-error">${escapeHtml(message)}</div>`);
+            }
+
+            // restore action buttons
+            const actions = section.querySelector('.section-actions');
+            if (actions) {
+                actions.innerHTML = `
+                    <button class="section-action-btn save" title="Save">✓</button>
+                    <button class="section-action-btn cancel" title="Cancel">✗</button>
+                `;
+                // re-attach handlers
+                actions.querySelector('.save').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    saveSection(section);
+                });
+                actions.querySelector('.cancel').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    cancelEdit(section);
+                });
+            }
+        }
+
+        // escape HTML for safe insertion
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // document loading via API
+        async function loadDocument(path) {
+            const emptyState = document.getElementById('empty-state');
+            const docContent = document.getElementById('document-content');
+
+            // clear editing state
+            currentEditingSection = null;
+
+            // show loading state
+            emptyState.style.display = 'none';
+            docContent.innerHTML = '<div class="loading">Loading...</div>';
+            docContent.style.display = 'block';
+
+            try {
+                // fetch both rendered and raw content
+                const [renderResponse, rawResponse] = await Promise.all([
+                    fetch(`/api/document?path=${encodeURIComponent(path)}`),
+                    fetch(`/api/document/raw?path=${encodeURIComponent(path)}`)
+                ]);
+
+                if (!renderResponse.ok) {
+                    const error = await renderResponse.json();
+                    docContent.innerHTML = `<div class="empty-state"><p>Error: ${error.error || 'Failed to load document'}</p></div>`;
+                    return;
+                }
+
+                const renderData = await renderResponse.json();
+                const rawData = rawResponse.ok ? await rawResponse.json() : null;
+
+                // store state
+                currentDocPath = path;
+                currentRawContent = rawData ? rawData.raw : null;
+
+                // parse sections from raw content
+                const sections = currentRawContent ? parseSections(currentRawContent) : [];
+
+                // build HTML with section wrappers
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = renderData.content;
+
+                if (sections.length > 0) {
+                    // distribute rendered elements into section wrappers
+                    const elements = Array.from(tempDiv.children);
+                    docContent.innerHTML = '';
+
+                    let sectionIndex = 0;
+                    let currentWrapper = document.createElement('div');
+                    currentWrapper.className = 'editable-section';
+                    currentWrapper.dataset.sectionIndex = '0';
+                    currentWrapper.dataset.startLine = String(sections[0].startLine);
+                    currentWrapper.dataset.endLine = String(sections[0].endLine);
+
+                    let foundFirstHeading = false;
+
+                    elements.forEach((el) => {
+                        const isHeading = /^H[123]$/.test(el.tagName);
+
+                        if (isHeading && foundFirstHeading) {
+                            // save current wrapper and start new one
+                            docContent.appendChild(currentWrapper);
+                            sectionIndex++;
+
+                            if (sectionIndex < sections.length) {
+                                currentWrapper = document.createElement('div');
+                                currentWrapper.className = 'editable-section';
+                                currentWrapper.dataset.sectionIndex = String(sectionIndex);
+                                currentWrapper.dataset.startLine = String(sections[sectionIndex].startLine);
+                                currentWrapper.dataset.endLine = String(sections[sectionIndex].endLine);
+                            }
+                        }
+
+                        if (isHeading) {
+                            foundFirstHeading = true;
+                        }
+
+                        currentWrapper.appendChild(el.cloneNode(true));
+                    });
+
+                    // append last wrapper
+                    docContent.appendChild(currentWrapper);
+
+                    // add metadata after first heading in first section
+                    const firstSection = docContent.querySelector('[data-section-index="0"]');
+                    if (firstSection) {
+                        const firstHeading = firstSection.querySelector('h1, h2, h3, h4, h5, h6');
+                        if (firstHeading) {
+                            const metadataHtml = `<div class="doc-metadata">
+                                <span class="doc-metadata-summary">Last updated ${formatRelativeTime(renderData.modified)} · Created ${formatDate(renderData.created)}</span>
+                                <div class="doc-metadata-extra">[placeholder for detailed metadata]</div>
+                            </div>`;
+                            firstHeading.insertAdjacentHTML('afterend', metadataHtml);
+
+                            // make metadata clickable
+                            const metadata = firstSection.querySelector('.doc-metadata');
+                            if (metadata) {
+                                metadata.addEventListener('click', (e) => {
+                                    e.stopPropagation();
+                                    metadata.classList.toggle('expanded');
+                                });
+                            }
+                        }
+                    }
+
+                    // setup click handlers for sections
+                    setupSectionClickHandlers(docContent);
+
+                } else {
+                    // no sections - show content as-is without editing
+                    docContent.innerHTML = renderData.content;
+
+                    // add metadata
+                    const firstHeading = docContent.querySelector('h1, h2, h3, h4, h5, h6');
+                    const metadataHtml = `<div class="doc-metadata">
+                        <span class="doc-metadata-summary">Last updated ${formatRelativeTime(renderData.modified)} · Created ${formatDate(renderData.created)}</span>
+                        <div class="doc-metadata-extra">[placeholder for detailed metadata]</div>
+                    </div>`;
+                    if (firstHeading) {
+                        firstHeading.insertAdjacentHTML('afterend', metadataHtml);
+                    } else {
+                        docContent.insertAdjacentHTML('afterbegin', metadataHtml);
+                    }
+
+                    const metadata = docContent.querySelector('.doc-metadata');
+                    if (metadata) {
+                        metadata.addEventListener('click', () => metadata.classList.toggle('expanded'));
+                    }
+                }
+
+            } catch (err) {
+                docContent.innerHTML = '<div class="empty-state"><p>Failed to load document</p></div>';
+            }
+        }
+
+        // expand/collapse sidebar section headers
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', (e) => {
+                e.stopPropagation();
+                header.classList.toggle('expanded');
+            });
+        });
+
+        // expand/collapse spec headers
+        document.querySelectorAll('.spec-header').forEach(header => {
+            header.addEventListener('click', (e) => {
+                e.stopPropagation();
+                header.classList.toggle('expanded');
+            });
+        });
+
+        // document item clicks - load document and highlight
+        document.querySelectorAll('.doc-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const sibling = item.nextElementSibling;
-                if (sibling && sibling.tagName === 'UL') {
-                    // close any other open lists
-                    document.querySelectorAll('.spec-list > li.expanded').forEach(other => {
-                        if (other !== item) other.classList.remove('expanded');
-                    });
-                    // toggle current
-                    item.classList.toggle('expanded');
+                const path = item.dataset.path;
+                if (path) {
+                    // remove active from all items and spec-headers
+                    document.querySelectorAll('.doc-item.active').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.spec-header.has-active').forEach(el => el.classList.remove('has-active'));
+
+                    // add active to clicked item
+                    item.classList.add('active');
+
+                    // find and highlight parent spec-header (if exists)
+                    const docList = item.closest('.doc-list');
+                    if (docList && docList.previousElementSibling?.classList.contains('spec-header')) {
+                        docList.previousElementSibling.classList.add('has-active');
+                        docList.previousElementSibling.classList.add('expanded');
+                    }
+
+                    // load the document
+                    loadDocument(path);
                 }
             });
         });

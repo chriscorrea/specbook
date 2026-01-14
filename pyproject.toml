@@ -1,6 +1,6 @@
 [project]
 name = "specbook"
-version = "0.0.1"
+version = "0.0.2"
 description = "CLI tool to collaborate on spec-driven development (SDD)"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -15,6 +15,8 @@ dependencies = [
     "uvicorn>=0.30",
     "jinja2>=3.1",
     "psutil>=5.9",
+    "markdown-it-py>=3.0",
+    "mdit-py-plugins>=0.4",
 ]
 
 [project.optional-dependencies]
