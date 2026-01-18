@@ -47,3 +47,6 @@ CLAUDE.md
 
 # Application-Specific files
 *.zip
+
+# documentation build output
+site/

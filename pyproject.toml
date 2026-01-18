@@ -1,7 +1,7 @@
 [project]
 name = "specbook"
 version = "0.0.2"
-description = "CLI tool to collaborate on spec-driven development (SDD)"
+description = "Tool to collaborate on spec-driven development (SDD)"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
@@ -27,6 +27,7 @@ dev = [
     "pyright>=1.1",
     "ruff>=0.9",
     "httpx>=0.27",
+    "zensical",
 ]
 
 [project.scripts]
@@ -44,7 +45,7 @@ testpaths = ["tests"]
 pythonpath = ["src"]
 
 [tool.pyright]
-pythonVersion = "3.11"
+pythonVersion = "3.12"
 typeCheckingMode = "basic"
 include = ["src"]
 
@@ -59,7 +60,7 @@ exclude_lines = [
 ]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"
 line-length = 100
 
 [tool.ruff.lint]
