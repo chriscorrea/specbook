@@ -769,6 +769,21 @@
             color: #fca5a5;
             font-size: var(--text-sm);
         }
+
+        /* help link */
+        .help-link {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-size: var(--text-sm);
+            margin-left: auto;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: color 0.2s ease, background-color 0.4s ease;
+        }
+        .help-link:hover {
+            color: var(--color-text);
+            background-color: var(--color-primary);
+        }
     </style>
 </head>
 <body>
@@ -776,6 +791,8 @@
         <header>
             <img src="/static/specbook_leaf_white.png" alt="Specbook logo">
             <h1>Specbook</h1>
+            <!-- contextual help links: use /docs/get-started/#section-name format -->
+            <a href="/docs" class="help-link" title="View documentation">Help</a>
         </header>
         <div class="layout">
             <aside class="sidebar" id="sidebar">

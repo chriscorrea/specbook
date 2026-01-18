@@ -82,6 +82,7 @@ def get_doc_status(doc_path: Path) -> SpecStatus:
 # templates and static dir relative to this file
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 STATIC_DIR = Path(__file__).parent / "static"
+DOCS_DIR = STATIC_DIR / "docs"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 # document type display name mapping
@@ -615,6 +616,10 @@ def create_app(project_root: Path) -> Starlette:
         Route("/api/checkbox", api_checkbox_toggle, methods=["POST"]),
         Mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static"),
     ]
+
+    # mount docs (if directory exists w/ content)
+    if DOCS_DIR.is_dir() and any(DOCS_DIR.iterdir()):
+        routes.append(Mount("/docs", StaticFiles(directory=str(DOCS_DIR), html=True), name="docs"))
     return Starlette(routes=routes)
 
 
