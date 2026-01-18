@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      <url>
+        <loc>https://chriscorrea.github.io/specbook/</loc>
+      </url>
+      <url>
+        <loc>https://chriscorrea.github.io/specbook/get-started/</loc>
+      </url>
+      <url>
+        <loc>https://chriscorrea.github.io/specbook/specbook-basic/</loc>
+      </url>
+      <url>
+        <loc>https://chriscorrea.github.io/specbook/spec-driven-development/</loc>
+      </url>
+      <url>
+        <loc>https://chriscorrea.github.io/specbook/specbook-advanced/</loc>
+      </url>
+</urlset>
