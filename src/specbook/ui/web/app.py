@@ -52,7 +52,10 @@ def parse_frontmatter(content: str) -> dict:
         return {}
     try:
         result = yaml.safe_load(match.group(1))
-        return result if isinstance(result, dict) else {}
+        if not isinstance(result, dict):
+            return {}
+        # normalize keys to lowercase for case-insensitivity
+        return {k.lower(): v for k, v in result.items()}
     except yaml.YAMLError:
         return {}
 
