@@ -4,6 +4,18 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
+__all__ = [
+    "ProjectRoot",
+    "SearchContext",
+    "ServerState",
+    "SpecStatus",
+    "SpecDocument",
+    "CompletionStatus",
+    "ProjectDocument",
+    "ProjectListing",
+    "SpecDirectoryExpanded",
+]
+
 
 @dataclass
 class ProjectRoot:
@@ -109,6 +121,32 @@ class ServerState(Enum):
     RUNNING = "running"
     STOPPED = "stopped"
     PORT_CONFLICT = "conflict"
+
+
+class SpecStatus(Enum):
+    """workflow status for a specification"""
+
+    DRAFT = "draft"
+    IN_REVIEW = "in-review"
+    APPROVED = "approved"
+    IMPLEMENTING = "implementing"
+    COMPLETE = "complete"
+    UNKNOWN = "unknown"
+
+    @classmethod
+    def from_string(cls, value: str | None) -> "SpecStatus":
+        """parse status string, returning DRAFT for missing,  UNKNOWN bad data"""
+        if not value:
+            return cls.DRAFT
+
+        # normalize string
+        normalized = value.lower().strip().replace("_", "-")
+
+        for status in cls:
+            if status.value == normalized:
+                return status
+
+        return cls.UNKNOWN
 
 
 @dataclass
@@ -221,6 +259,15 @@ class SpecDocument:
     doc_type: str
     """type identifier: 'spec', 'plan', 'tasks', 'research', 'data-model', 'quickstart', 'other'"""
 
+    status: "SpecStatus" = None  # type: ignore[assignment]
+    """workflow status from doc frontmatter
+    TODO: consider all docs in spec dir to determine status
+    """
+
+    def __post_init__(self) -> None:
+        if self.status is None:
+            self.status = SpecStatus.UNKNOWN
+
 
 @dataclass
 class CompletionStatus:
@@ -264,6 +311,9 @@ class SpecDirectoryExpanded:
 
     completion: CompletionStatus
     """completion status from tasks.md analysis"""
+
+    status: SpecStatus = SpecStatus.DRAFT
+    """workflow status from spec.md frontmatter"""
 
     @property
     def is_complete(self) -> bool:

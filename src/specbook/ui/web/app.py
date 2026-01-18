@@ -4,6 +4,7 @@ import re
 import sys
 from pathlib import Path
 
+import yaml
 from markdown_it import MarkdownIt
 from mdit_py_plugins.tasklists import tasklists_plugin
 from starlette.applications import Starlette
@@ -19,15 +20,60 @@ from specbook.core.models import (
     ProjectListing,
     SpecDirectoryExpanded,
     SpecDocument,
+    SpecStatus,
 )
 
 # markdown renderer with tables, strikethrough, and task lists
 _md = MarkdownIt("commonmark").enable("table").enable("strikethrough").use(tasklists_plugin)
 
+# regex to match YAML frontmatter (but doesn't validate YAML; see parse_frontmatter)
+_FRONTMATTER_PATTERN = re.compile(r"^\s*---\s*\n(.*?)\n---\s*\n", re.DOTALL)
+
 
 def render_markdown(content: str) -> str:
-    """render markdown content to HTML"""
+    """render markdown content to HTML, excluding frontmatter"""
+
+    # remove frontmatter when rendering view
+    match = _FRONTMATTER_PATTERN.match(content)
+    if match:
+        # define content as post-frontmatter
+        content = content[match.end() :]
     return _md.render(content)
+
+
+def parse_frontmatter(content: str) -> dict:
+    """extract YAML frontmatter from markdown content
+    (What is 'frontmatter'? See https://jekyllrb.com/docs/front-matter/
+
+    returns empty dict if frontmatter cannot be parsed
+    """
+    match = _FRONTMATTER_PATTERN.match(content)
+    if not match:
+        return {}
+    try:
+        result = yaml.safe_load(match.group(1))
+        return result if isinstance(result, dict) else {}
+    except yaml.YAMLError:
+        return {}
+
+
+def get_doc_status(doc_path: Path) -> SpecStatus:
+    """read status value from frontmatter of doc at doc_path
+
+    returns SpecStatus.DRAFT if status or frontmatter can't be parsed
+    returns SpecStatus.UNKNOWN if status value is not recognized
+    TODO: return other statuses based on doc analysis (e.g. tasks completed)
+    """
+    if not doc_path.is_file():
+        return SpecStatus.DRAFT
+
+    try:
+        content = doc_path.read_text(encoding="utf-8")
+        frontmatter = parse_frontmatter(content)
+        status_value = frontmatter.get("status")
+        return SpecStatus.from_string(status_value)
+    except OSError:
+        return SpecStatus.DRAFT
 
 
 # templates and static dir relative to this file
@@ -110,12 +156,14 @@ def _scan_spec_documents(spec_dir: Path) -> list[SpecDocument]:
     for f in spec_dir.iterdir():
         if f.is_file() and f.suffix == ".md":
             display_name, doc_type, _ = _get_document_info(f.name)
+            status = get_doc_status(f)
             docs.append(
                 SpecDocument(
                     name=f.name,
                     path=f,
                     display_name=display_name,
                     doc_type=doc_type,
+                    status=status,
                 )
             )
 
@@ -126,12 +174,14 @@ def _scan_spec_documents(spec_dir: Path) -> list[SpecDocument]:
                 if f.is_file() and f.suffix == ".md":
                     # use subdir/filename format for display
                     display_name = f"{subdir.name}/{f.stem}".title()
+                    status = get_doc_status(f)
                     docs.append(
                         SpecDocument(
                             name=f"{subdir.name}/{f.name}",
                             path=f,
                             display_name=display_name,
                             doc_type="other",
+                            status=status,
                         )
                     )
 

@@ -17,6 +17,7 @@ dependencies = [
     "psutil>=5.9",
     "markdown-it-py>=3.0",
     "mdit-py-plugins>=0.4",
+    "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
