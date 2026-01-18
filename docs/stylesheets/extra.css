@@ -1,0 +1,155 @@
+/* Specbook visual consistency overrides for Zensical/Material theme */
+/* Match the main Specbook application styling */
+
+/* Import Specbook fonts - Plus Jakarta Sans for text, JetBrains Mono for code */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+    /* fonts - match main app */
+    --md-text-font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    --md-code-font: 'JetBrains Mono', monospace;
+
+    /* primary colors - teal (from main app) */
+    --md-primary-fg-color: #0d9488;
+    --md-primary-fg-color--light: #5eead4;
+    --md-primary-fg-color--dark: #134e4a;
+
+    /* accent colors */
+    --md-accent-fg-color: #5eead4;
+    --md-accent-fg-color--transparent: rgba(94, 234, 212, 0.1);
+
+    /* background - dark theme (from main app) */
+    --md-default-bg-color: #1a1f2e;
+    --md-default-fg-color: #eef0f4;
+    --md-default-fg-color--light: #8b92a8;
+    --md-default-fg-color--lighter: #6b7280;
+
+    /* code blocks (from main app) */
+    --md-code-bg-color: #262c3a;
+    --md-code-fg-color: #eef0f4;
+
+    /* typeset links */
+    --md-typeset-a-color: #5eead4;
+}
+
+/* Force dark mode palette */
+[data-md-color-scheme="slate"],
+[data-md-color-scheme="default"] {
+    --md-default-bg-color: #1a1f2e;
+    --md-default-fg-color: #eef0f4;
+    --md-default-fg-color--light: #8b92a8;
+    --md-default-fg-color--lighter: #6b7280;
+    --md-code-bg-color: #262c3a;
+    --md-code-fg-color: #eef0f4;
+}
+
+/* header styling - match main app header */
+.md-header {
+    background-color: #134e4a;
+}
+
+.md-header__title {
+    font-weight: 600;
+}
+
+/* navigation styling */
+.md-nav__link {
+    color: #8b92a8;
+}
+
+.md-nav__link:hover {
+    color: #eef0f4;
+}
+
+.md-nav__link--active {
+    color: #5eead4;
+}
+
+/* content area */
+.md-content {
+    background-color: #1a1f2e;
+}
+
+/* sidebar */
+.md-sidebar {
+    background-color: #1a1f2e;
+}
+
+/* main container */
+.md-main {
+    background-color: #1a1f2e;
+}
+
+/* footer */
+.md-footer {
+    background-color: #1a1f2e;
+    border-top: 1px solid #3b4252;
+}
+
+.md-footer-meta {
+    background-color: #1a1f2e;
+}
+
+/* code blocks */
+.md-typeset code {
+    background-color: #262c3a;
+    color: #eef0f4;
+}
+
+.md-typeset pre {
+    background-color: #262c3a;
+}
+
+/* tables */
+.md-typeset table:not([class]) th {
+    background-color: #323a4a;
+}
+
+.md-typeset table:not([class]) tr:hover {
+    background-color: #262c3a;
+}
+
+/* search */
+.md-search__form {
+    background-color: #262c3a;
+}
+
+.md-search__input {
+    background-color: #262c3a;
+    color: #eef0f4;
+}
+
+/* admonitions (note, warning, etc) */
+.md-typeset .admonition,
+.md-typeset details {
+    background-color: #262c3a;
+    border-color: #3b4252;
+}
+
+/* buttons and tabs */
+.md-typeset .tabbed-labels>label {
+    color: #8b92a8;
+}
+
+.md-typeset .tabbed-labels>label:hover {
+    color: #eef0f4;
+}
+
+/* scrollbar styling for consistency */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1f2e;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3b4252;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4a5568;
+}

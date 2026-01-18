@@ -1,0 +1,21 @@
+[project]
+site_name = "Specbook Documentation"
+site_url = "https://chriscorrea.github.io/specbook/"
+site_description = "Documentation for Specbook, a spec-driven development tool"
+docs_dir = "docs"
+site_dir = "site"
+extra_css = ["stylesheets/extra.css"]
+
+# Intentional navigation order
+nav = [
+  {"Home" = "index.md"},
+  {"Get Started" = "get-started.md"},
+  {"Using Specbook" = "specbook-basic.md"},
+  {"Spec-Driven Development" = "spec-driven-development.md"},
+  {"Advanced Specbook" = "specbook-advanced.md"}
+]
+
+[project.theme]
+variant = "modern"
+favicon = "assets/favicon.ico"
+custom_dir = "docs/overrides"
